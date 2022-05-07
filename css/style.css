@@ -6,6 +6,12 @@
 * {
   margin: 0;
   padding: 0;
+  user-select: none;
+}
+
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -99,7 +105,6 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  
 }
 .selected {
   transform: rotateY(180deg);
