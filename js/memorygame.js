@@ -46,71 +46,63 @@ function generate() {
     const front = document.createElement("div");
     front.className = "front";
     const back = document.createElement("div");
-    back.classList.add("back");
+    back.className = "back";
     back.style.backgroundImage = `url(${item.img})`;
     card.appendChild(front);
     card.appendChild(back);
     grid.appendChild(card);
   });
 }
+//create generate so that we can create it again after game done
 generate();
-
-const cards = [...grid.querySelectorAll(".card")];
-
-//click grid
+const cards = document.querySelectorAll(".card");
 let count = 0;
-let firstCLick = "";
+let firstClick = "";
 let secondClick = "";
-let delay = 1200;
-let previousCard;
+let delay = 1000;
 //matching function when matched
 function matchingCard() {
-  const selectedItems = [...document.querySelectorAll(".selected")];
+  const selectedItems = grid.querySelectorAll(".selected");
   selectedItems.forEach((item) => item.classList.add("matched"));
-  selectedItems.forEach((item) => item.classList.remove("selected"));
 }
 
 //after 2 clicks we reset the beginning status of card
 function reset() {
   count = 0;
-  firstCLick = "";
+  firstClick = "";
   secondClick = "";
-  const selectedItems = [...document.querySelectorAll(".selected")];
+  const selectedItems = grid.querySelectorAll(".selected");
   selectedItems.forEach((item) => item.classList.remove("selected"));
-  const matchedCardsCount = [...document.querySelectorAll(".matched")];
-  if (matchedCardsCount.length === cards.length) {
-    setTimeout(() => {
-      matchedCardsCount.forEach((item) => item.classList.remove("matched"));
-    });
-    setTimeout(generate, 2000);
+  const matchedItems = grid.querySelectorAll(".matched");
+  if (matchedItems.length === cards.length) {
+    setTimeout(generate, 800);
   }
 }
 
 grid.addEventListener("click", function (e) {
-  const cliked = e.target;
-  const clickedParent = cliked.parentNode;
+  const clicked = e.target;
+  const cardParent = clicked.parentNode;
   if (
-    cliked.nodeName === "SECTION" ||
-    clickedParent.classList.contains("selected") ||
-    clickedParent.classList.contains("matched")
+    clicked.nodeName === "SECTION" ||
+    cardParent.classList.contains("selected") || //which card has selected / matched, cannot click again
+    cardParent.classList.contains("matched")
   ) {
     return;
   }
   if (count < 2) {
     count++;
     if (count === 1) {
-      firstCLick = clickedParent.dataset.name;
+      firstClick = cardParent.dataset.name;
     } else {
-      secondClick = clickedParent.dataset.name;
+      secondClick = cardParent.dataset.name;
     }
-    clickedParent.classList.add("selected");
-    if (firstCLick && secondClick) {
-      if (firstCLick === secondClick) {
-        setTimeout(matchingCard, 1000);
-      }
+    cardParent.classList.add("selected");
+
+    if (firstClick && secondClick) {
+      firstClick === secondClick
+        ? setTimeout(matchingCard, delay)
+        : setTimeout(reset, delay);
       setTimeout(reset, delay);
     }
-    previousCard = clickedParent;
   }
 });
-//when finished all, we have to reset all the game
